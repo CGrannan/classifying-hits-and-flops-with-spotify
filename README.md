@@ -1,104 +1,75 @@
+# Predicting Hits and Flops with Spotify
 
-# Module 5 Final Project
+For this project I am working with information from spotify. The data includes different descriptive statistics of tracks and seeks to classify those tracks as hits or flops. The target is a binary variable indicating if a song was a hit. For a full overview of the column meanings, there is a readme file inside the archive folder. This file goes over all of the variables as well as defines the criteria for a song being labeled a hit. The end goal will be to see if a recording label is able to indicate whether a song is likely to comercially succeed before being officially released. Here is a brief outline of the project, but for a more indepth look make sure to look at the notebook.ipynb file.
 
+## Data Preprocessing & EDA
 
-## Introduction
+We made a few interesting decisions during data cleaning. We removed two instances where there was no time signature for a track, and we removed a few outliers from the duration_ms, chorus_hit, and sections columns. After removing these outliers we still had over 31,000 tracks. At this point, we explored some relationships within the data. First we looked at the distribution of hits by decade.
 
-In this lesson, we'll review all the guidelines and specifications for the final project for Module 5.
+![](images/hits_by_decade.png)
 
+It seems like we have many more hits represented in the earlier decades. We also checked some correlations between variables. We had two strong negative correlations and two strong positive correlations. First, here are the negative correlations:
 
-## Objectives
+![](images/accousticness_energy.png)
 
-* Understand all required aspects of the Final Project for Module 5
-* Understand all required deliverables
-* Understand what constitutes a successful project
+![](images/accousticness_loudness.png)
 
-## Final Project Summary
+We can see that 'accousticness' correlates negatively with both energy and loudness. This is understandable as acoustic music usually tends to be softer and quieter compared to music with electric imstruments. Here are the two positive correlations:
 
-Congratulations! You've made it through another _intense_ module, and now you're ready to show off your newfound Machine Learning skills!
+![](images/loudness_energy.png)
 
-![awesome](https://raw.githubusercontent.com/learn-co-curriculum/dsc-mod-5-project/master/smart.gif)
+![](images/duration_sections.png)
 
-All that remains for Module 5 is to complete the final project!
+Here we see two more relationships that make sense. Our definition of energy includes loudness, so naturally they would correlate. Similarly, a longer song is expected to have more sections. At this point we were ready to start building classifiers.
 
-## The Project
+## Modeling
 
-For this project, you're going to select a dataset of your choosing and create a classification model. You'll start by identifying a problem you can solve with classification, and then identify a dataset. You'll then use everything you've learned about Data Science and Machine Learning thus far to source a dataset, preprocess and explore it, and then build and interpret a classification model that answers your chosen question.
+We decided to use a variety of classifiers for this project, and fine-tune each of them as much as possible before selecting our final model. We used logistic regression, k-nearest neighbors, support vector machine, random forest, and adaboost models. To begin modeling, we established a baseline for each of these types of classifiers by using the default parameters. Of these models, the random forest had the best accuracy at 79.9%. To take this further we attempted to use principal component analysis to reduce dimensionality. When we ran the models on the PCA transformed data, all models produced worse results. At this point we decided to drop the PCA approach. Next, we used GridSearchCV to fine-tune the parameters for each model to get the best result we could. Once we had the best possible model for each approach, we inspected the confusion matrixes and areas under the ROC curve. Here are the resulting matrices for each model.
 
+Logistic Regression:
 
-### Selecting a Data Set
+![](images/logreg_matrix.png)
 
-We encourage you to be very thoughtful when identifying your problem and selecting your data set--an overscoped project goal or a poor data set can quickly bring an otherwise promising project to a grinding halt.
+K-nearest neighbors:
 
-To help you select an appropriate data set for this project, we've set some guidelines:
+![](images/knn_matrix.png)
 
-1. Your dataset should work for classification. The classification task can be either binary or multiclass, as long as it's a classification model.   
+Support vector machine:
 
-2. Your dataset needs to be of sufficient complexity. Try to avoid picking an overly simple dataset. Try to avoid extremely small datasets, as well as the most common datasets like titanic, iris, MNIST, etc. We want to see all the steps of the Data Science Process in this project--it's okay if the dataset is mostly clean, but we expect to see some preprocessing and exploration. See the following section, **_Data Set Constraints_**, for more information on this.   
+![](images/svm_matrix.png)
 
-3. On the other end of the spectrum, don't pick a problem that's too complex, either. Stick to problems that you have a clear idea of how you can use machine learning to solve it. For now, we recommend you stay away from overly complex problems in the domains of Natural Language Processing or Computer Vision--although those domains make use of Supervised Learning, they come with a lot of other special requirements and techniques that you don't know yet (but you'll learn soon!). If your chosen problem feels like you've overscoped, then it probably is. If you aren't sure if your problem scope is appropriate, double check with your instructor!  
+Random forest:
 
-4. **_Serious Bonus Points_** if some or all of the data is data you have to source yourself through web scraping or interacting with a 3rd party API! Having projects that show off your ability to source data effectively make you look that much more impressive when showing your work off to potential employers!
+![](images/forest_matrix.png)
 
-### Data Set Constraints
+Adaboost:
 
-When selecting a data set, be sure to take into consideration the following constraints:
+![](images/ada_matrix.png)
 
-1. Your data set can't be one we've already worked with in any labs.
-2. Your data set should contain a minimum of 1000 rows.    
-3. Your data set should contain a minimum of 10 predictor columns, before any one-hot encoding is performed.   
-4. Your instructor must provide final approval on your data set.
+All models have good accuracy and precission, but they also all show a tendency to mislabel flops as hits resulting in a relatively high false positive rate. The random forest model has the lowest false positive rate, but even still shows this tendency.
 
-### Problem First, or Data First?
+And here is the training and testing ROC curves plotted:
 
-There are two ways that you can about getting started: **_Problem-First_** or **_Data-First_**.
+![](images/train_roc.png)
 
-**_Problem-First_**: Start with a problem that you want to solve with classification, and then try to find the data you need to solve it.  If you can't find any data to solve your problem, then you should pick another problem.
+![](images/test_roc.png)
 
-**_Data-First_**: Take a look at some of the most popular internet repositories of cool data sets we've listed below. If you find a data set that's particularly interesting for you, then it's totally okay to build your problem around that data set.
+The models all perform well, but with higher false positive rates than I would like. The SVM model is slightly more accurate with an AUC of .80, but the random forest model has a lower false positive rate. Ultimately, I think the SVM model is the better model unless we are looking to be conservative, in which case the random forest is better. Finally, we used permutation importance to determine the weights of our features. Here are the weights for our two best models:
 
-There are plenty of amazing places that you can get your data from. We recommend you start looking at data sets in some of these resources first:
+SVM features:
 
-* [UCI Machine Learning Datasets Repository](https://archive.ics.uci.edu/ml/datasets.html)
-* [Kaggle Datasets](https://www.kaggle.com/datasets)
-* [Awesome Datasets Repo on Github](https://github.com/awesomedata/awesome-public-datasets)
-* [New York City Open Data Portal](https://opendata.cityofnewyork.us/)
-* [Inside AirBNB ](http://insideairbnb.com/)
+![](images/svm_features.png)
 
+Random forest features:
 
-## The Deliverables
+![](images/forest_features.png)
 
-For online students, your completed project should contain the following four deliverables:
+The two models have similar orders for features, especially at the top of the list, but ascribe fairly different weights. We should note that 'instrumentalness' and 'accousticness' are the two best features for both models.
 
-1. A **_Jupyter Notebook_** containing any code you've written for this project. This work will need to be pushed to your GitHub repository in order to submit your project.
+## Summary
 
-2. An organized **README.md** file in the GitHub repository that describes the contents of the repository. This file should be the source of information for navigating through the repository. 
+We built two models that we can use to predict if a song will be a commercial hit. Our SVM model has a higher overall accuracy, correctly classifying songs about 80% of the time. However, if we are trying to conservatively predict flops so as to avoid risky investments, then we should be using the random forest classifier. This model had the lowest rate of false positives, meaning we have a lower chance of investing in marketing campaigns that are destined to fail. Further more, when looking at what makes a commercially successful song, we were able to distinguish key features used by both models. Instrumentalness is key it seems as both models placed that as the strongest feature. Accousticness, danceability, energy and duration round out the rest of the top 5 in both models, though not in the same order. When deciding on which tracks to support, we should be keeping these key factors in mind.
 
-3. A **_[Blog Post](https://github.com/learn-co-curriculum/dsc-welcome-blogging)_**.
+## Future Work
 
-4. An **_"Executive Summary" PowerPoint Presentation_** that gives a brief overview of your problem/dataset, and each step of the OSEMN process.
-
-Note: On-campus students may have different deliverables, please speak with your instructor.
-
-### Jupyter Notebook Must-Haves
-
-For this project, your Jupyter Notebook should meet the following specifications:
-
-**_Organization/Code Cleanliness_**
-
-* The notebook should be well organized, easy to follow, and code is commented where appropriate.  
-    * Level Up: The notebook contains well-formatted, professional looking markdown cells explaining any substantial code. All functions have docstrings that act as professional-quality documentation.  
-* The notebook is written to technical audiences with a way to both understand your approach and reproduce your results. The target audience for this deliverable is other data scientists looking to validate your findings.  
-
-**_Process, Methodology, and Findings_**
-
-* Your notebook should contain a clear record of your process and methodology for exploring and preprocessing your data, building and tuning a model, and interpreting your results.
-* We recommend you use the OSEMN process to help organize your thoughts and stay on track.
-
-### Blog Post Must-Haves
-
-Refer back to the [Blogging Guidelines](https://github.com/learn-co-curriculum/dsc-welcome-blogging) for the technical requirements and blog ideas.
-
-## Grading Rubric 
-
-Online students can find a PDF of the grading rubric for the project [here](https://github.com/learn-co-curriculum/dsc-mod-5-project/blob/master/module5_project_rubric.pdf). _Note: On-campus students may have different requirements, please speak with your instructor._ 
+There are a few ways that I think we can expand on this project. First, we can narrow the focus of our predictions down to just classifying tracks released in the last 5 or 10 years. This will allow us to focus on the market demands of the current generation, rather than looking at overarching trends over the last several decades. Second, I would look at testing this model by genre of music. Will we have similar results when comparing country music and opera music? Perhaps we can get a better accuracy if we train and use our model on individual genres, rather than all tracks.
