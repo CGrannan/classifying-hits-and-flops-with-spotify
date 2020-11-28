@@ -64,7 +64,7 @@ Random forest features:
 
 ![images/forest_features.png](https://github.com/CGrannan/dsc-mod-5-project-online-ds-sp-000/blob/master/images/forest_features.png)
 
-The two models have similar orders for features, especially at the top of the list, but ascribe fairly different weights. We should note that 'instrumentalness' and 'accousticness' are the two best features for both models.
+The two models have similar orders for features, especially at the top of the list, but assign fairly different weights. We should note that 'instrumentalness' and 'accousticness' are the two best features for both models.
 
 ## Summary
 
