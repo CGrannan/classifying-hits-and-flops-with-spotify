@@ -1,5 +1,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+import seaborn as sns
 from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import classification_report
 from sklearn.metrics import confusion_matrix, plot_confusion_matrix
@@ -84,6 +85,16 @@ def classifier_results(clf, xtrain, xtest, ytrain, ytest, train_preds, test_pred
     plt.show()
     print('Confusion Matrix - Testing')
     plot_confusion_matrix(clf, xtest, ytest, normalize='true')
+    plt.show()
+    
+    cm = confusion_matrix(ytest, test_preds)
+    
+    lst = [cm[0,0], cm[0,1], cm[1,1], cm[1,0]]
+    labels = ['Identified Flops', 'Misidentified Flops', 'Identified Hits', 'Misidentified Hits']
+    
+    plt.figure(figsize=(10,6))
+    plt.title('Test Results')
+    sns.barplot(labels, lst, palette=['#d01c8b', '#f1b6da', '#4dac26', '#b8e186'])
     plt.show()
     
     return auc_train, auc_test
