@@ -87,3 +87,17 @@ We built two models that we can use to predict if a song will be a commercial hi
 ## Future Work
 
 There are a few ways that I think we can expand on this project. First, we can narrow the focus of our predictions down to just classifying tracks released in the last 5 or 10 years. This will allow us to focus on the market demands of the current generation, rather than looking at overarching trends over the last several decades. Second, I would look at testing this model by genre of music. Will we have similar results when comparing country music and opera music? Perhaps we can get a better accuracy if we train and use our model on individual genres, rather than all tracks.
+
+## Files
+
+Here is a brief overview of the structure of this repository.
+
+Images contains several graphs that are saved as png files.
+
+Archive is a zip folder containing all track information and a README file that includes column descriptions
+
+Classifier_functions is a pyscript with several helper functions used in analyzing the data
+
+Classifier_modeling is the notebook where we clean the data, model our classifiers and analyze results
+
+Spotify_classifiers_presentation is an example non-technical presentation for this project
