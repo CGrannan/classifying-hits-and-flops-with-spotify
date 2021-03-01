@@ -1,6 +1,13 @@
 # Predicting Hits and Flops with Spotify
 
-For this project I am working with information from spotify. The data includes different descriptive statistics of tracks and seeks to classify those tracks as hits or flops. The target is a binary variable indicating if a track was a hit. For a full overview of the column meanings, there is a readme file inside the archive folder. This file goes over all of the variables as well as defines the criteria for a track being labeled a hit. The end goal will be to see if a recording label is able to indicate whether a track is likely to comercially succeed before being officially released. Here is a brief outline of the project, but for a more indepth look make sure to look at the notebook.ipynb file.
+## Abstract
+
+Marketing tracks is an expensive process and marketing failed singles can represent a huge loss for a recording label. For this project, I am looking to see if there are identifiable features of songs that indicate whether they will be hits or flops. The end goal of this project is to provide record labels a tool that will indicate whether tracks are worth heavy investment. I will be training five types of classifiers for this task: Logistic Regression, K-Nearest Neighbors, Support Vector Machine, Random Forest and Adaboost. In addition to the baseline for these models, I will also attempt some feature selection techniques using Principal Component Analysis and Permutation Importance.
+
+The data for this project consists of 32,426 tracks obtained through the [Spotipy](https://spotipy.readthedocs.io/en/2.17.1/) wrapper. You can find the complete dataset on [kaggle](https://www.kaggle.com/theoverman/the-spotify-hit-predictor-dataset). Each record of a song contains information on the danceability , energy, key, loudness, mode, speechiness, acousticness, instrumentalness, liveness, valence, tempo, duration_ms, time_signature, chorus_hit, and sections. I won't go over what each column entails in detail, but there is a seperate README file inside the dataset that explains what each column entails and how some features were calculated.
+
+When all models were tested and analyzed, two models were selected as the most reliable. The SVM model is able to separate hits and flops about 80% of the time and is therefore the most reliable model overall. However, all of our models had a tendency toward a high false positive rate (mislabelling flops as hits) representing a potentially high cost of using these models to recording labels. The model that had the lowest false positive rate was the random forest, showing that it is the best model in a conservative sense. Feature selection did not have a noticeable effect on the results of the models.
+
 
 ## Data Preprocessing & EDA
 
